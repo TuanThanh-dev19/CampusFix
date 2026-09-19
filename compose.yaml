@@ -1,0 +1,21 @@
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: campusfix-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-campusfix}
+      POSTGRES_USER: ${POSTGRES_USER:-campusfix}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-campusfix_local}
+    ports:
+      - "5432:5432"
+    volumes:
+      - campusfix_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-campusfix} -d ${POSTGRES_DB:-campusfix}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  campusfix_postgres_data:
