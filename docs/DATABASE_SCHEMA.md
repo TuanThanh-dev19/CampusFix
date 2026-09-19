@@ -19,6 +19,33 @@ Docker service `sqlserver-init` chỉ tạo database rỗng `campusfix`. Khi bac
 khởi động, Flyway tự chạy lần lượt V1 đến V7 để tạo bảng, khóa ngoại, constraint,
 index và dữ liệu nền.
 
+## File SQL gộp để chạy thủ công
+
+File `infrastructure/sqlserver/campusfix_full_schema.sql` chứa toàn bộ nội dung
+V1 đến V7 trong một file duy nhất. File này dành cho việc nộp bài, đọc schema,
+hoặc khởi tạo thủ công bằng SSMS/`sqlcmd` trên database mới và rỗng.
+
+Không chạy file gộp trên database đã được Flyway quản lý, và không dùng đồng
+thời hai cách khởi tạo trên cùng database:
+
+- Phát triển Spring Boot: dùng Flyway bằng cách khởi động backend.
+- Khởi tạo thủ công độc lập: dùng `campusfix_full_schema.sql` một lần trên
+  database rỗng.
+
+Chạy file gộp trong SQL Server Docker:
+
+```powershell
+docker compose exec -T sqlserver /bin/bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -b -d master -i /opt/campusfix/sql/campusfix_full_schema.sql'
+```
+
+Trong SSMS, mở file, kết nối SQL Server và chọn **Execute**. Script tự tạo
+database `campusfix` nếu database chưa tồn tại và dừng với lỗi nếu database đã
+có bảng, nhằm tránh ghi đè dữ liệu.
+
+Khi nhóm thêm migration V8 trở lên, file gộp cũng phải được cập nhật nếu vẫn
+muốn dùng nó để nộp hoặc khởi tạo thủ công. Flyway migrations mới vẫn là nguồn
+chính thức của backend.
+
 ## Nhóm bảng
 
 | Nhóm | Bảng vật lý chính |
