@@ -126,5 +126,6 @@ Further documentation:
 - [SBA301 project structure](docs/PROJECT_STRUCTURE_SBA301.md)
 - [GitHub setup](docs/GITHUB_SETUP.md)
 - [SQL Server and Docker team guide](docs/SQLSERVER_DOCKER_GUIDE.md)
+- [ERD to SQL Server schema mapping](docs/DATABASE_SCHEMA.md)
 
 > Version note: this starter uses Spring Boot 4.1 and ReactJS with JavaScript/JSX. The frontend has no TypeScript compilation step. If the lecturer provides a mandatory Spring Boot 3 starter, follow that rubric while keeping the same feature boundaries and workflow rules.
