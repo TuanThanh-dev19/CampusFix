@@ -1,6 +1,6 @@
 # CampusFix frontend
 
-React + TypeScript single-page application for CampusFix.
+ReactJS + JavaScript/JSX single-page application for CampusFix.
 
 ```bash
 npm install
@@ -17,16 +17,18 @@ src/
 ├── app/                  Router, providers, route guards
 ├── features/
 │   ├── auth/             components, context, pages, schemas
-│   ├── tickets/          api, components, hooks, pages, types
+│   ├── tickets/          api, components, constants, hooks, pages
 │   ├── dashboard/        components, pages
-│   ├── assets/           components, types
-│   └── categories/       components, types
+│   ├── assets/           components, constants
+│   └── categories/       components, constants
 ├── shared/               Cross-feature components, layouts, hooks, utilities
 ├── test/
-├── App.tsx
-└── main.tsx
+├── App.jsx
+└── main.jsx
 ```
 
-`features` is not another name for `components`. A feature is a business module; it may contain components, pages, API calls, hooks, validation schemas, and types. Read `src/features/README.md` before adding a new feature.
+Use `.jsx` for React components/pages that render JSX and `.js` for plain modules such as API clients, hooks, schemas, configuration, and utilities. `jsconfig.json` provides editor support; there is no TypeScript compiler step.
+
+`features` is not another name for `components`. A feature is a business module; it may contain components, pages, API calls, hooks, validation schemas, and runtime models/constants. Read `src/features/README.md` before adding a new feature.
 
 The current sign-in screen deliberately contains a UI-only demo session so route and role guards can be reviewed before the backend authentication endpoints exist. It stores no token. Replace `loginDemo` with the real authentication flow before implementing real users.
