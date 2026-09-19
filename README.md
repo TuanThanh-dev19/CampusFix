@@ -6,7 +6,7 @@ CampusFix is a campus incident reporting, maintenance workflow, and equipment tr
 
 - Backend: Java 21, Spring Boot 4.1, Maven, Spring Security, JPA, Bean Validation, Flyway.
 - Database: Microsoft SQL Server 2022 Developer.
-- Frontend: React 19, TypeScript, Vite, React Router, Axios, TanStack Query, React Bootstrap.
+- Frontend: ReactJS 19, JavaScript/JSX, Vite, React Router, Axios, TanStack Query, React Bootstrap.
 - Tests: JUnit/Spring Test, SQL Server Testcontainers, Vitest/React Testing Library.
 - Local infrastructure: Docker Compose with a persistent SQL Server volume.
 
@@ -127,4 +127,4 @@ Further documentation:
 - [GitHub setup](docs/GITHUB_SETUP.md)
 - [SQL Server and Docker team guide](docs/SQLSERVER_DOCKER_GUIDE.md)
 
-> Version note: this starter currently uses Spring Boot 4.1 and React with TypeScript. If the lecturer provides a mandatory Spring Boot 3 or JavaScript-only starter, follow that rubric while keeping the same feature boundaries and workflow rules.
+> Version note: this starter uses Spring Boot 4.1 and ReactJS with JavaScript/JSX. The frontend has no TypeScript compilation step. If the lecturer provides a mandatory Spring Boot 3 starter, follow that rubric while keeping the same feature boundaries and workflow rules.

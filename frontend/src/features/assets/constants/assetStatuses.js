@@ -1,0 +1,6 @@
+export const ASSET_STATUSES = [
+  'ACTIVE',
+  'UNDER_MAINTENANCE',
+  'OUT_OF_SERVICE',
+  'RETIRED',
+]

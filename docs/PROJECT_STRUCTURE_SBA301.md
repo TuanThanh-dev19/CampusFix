@@ -4,16 +4,16 @@
 
 Nguồn FPT công khai xác nhận SBA301 là môn **Integrate Single Page Application with Spring Boot**. Không có nguồn công khai nào quy định một cây thư mục duy nhất bắt buộc cho mọi lớp. Vì vậy, cấu trúc của nhóm cần làm rõ được các nội dung chính: React SPA, component, route, hooks/context, gọi REST API, Spring Controller–Service–Repository, validation, authentication/authorization và kiểm thử.
 
-CampusFix sử dụng **feature-first modular monolith**. Mỗi thành viên có thể phụ trách một nghiệp vụ xuyên suốt từ database, REST API đến React UI mà không phải cùng sửa một số file trung tâm quá lớn.
+CampusFix sử dụng **feature-first modular monolith** và ReactJS bằng **JavaScript/JSX**. Mỗi thành viên có thể phụ trách một nghiệp vụ xuyên suốt từ database, REST API đến React UI mà không phải cùng sửa một số file trung tâm quá lớn.
 
 ## Frontend
 
 ```text
 frontend/src/
 ├── app/
-│   ├── router.tsx
-│   ├── providers.tsx
-│   ├── queryClient.ts
+│   ├── router.jsx
+│   ├── providers.jsx
+│   ├── queryClient.js
 │   └── routes/
 ├── features/
 │   ├── auth/
@@ -24,9 +24,9 @@ frontend/src/
 │   ├── tickets/
 │   │   ├── api/
 │   │   ├── components/
+│   │   ├── constants/
 │   │   ├── hooks/
 │   │   ├── pages/
-│   │   └── types/
 │   ├── assets/
 │   ├── categories/
 │   ├── dashboard/
@@ -37,11 +37,11 @@ frontend/src/
 │   ├── hooks/
 │   ├── layouts/
 │   ├── styles/
-│   ├── types/
+│   ├── constants/
 │   └── utils/
 ├── test/
-├── App.tsx
-└── main.tsx
+├── App.jsx
+└── main.jsx
 ```
 
 Quy ước:
@@ -53,6 +53,7 @@ Quy ước:
 - `context`: chỉ dùng cho trạng thái global thực sự như phiên đăng nhập.
 - `schemas`: validation form phía frontend.
 - `shared`: chỉ chứa mã được ít nhất hai feature sử dụng.
+- File có JSX dùng đuôi `.jsx`; module JavaScript không render JSX dùng `.js`. Project frontend không dùng `.ts`, `.tsx` hoặc bước compile TypeScript.
 
 Không tạo hàng loạt thư mục rỗng. Khi feature cần file thuộc loại nào mới tạo thư mục loại đó.
 
