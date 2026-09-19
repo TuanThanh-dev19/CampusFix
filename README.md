@@ -77,3 +77,7 @@ npm run build
 - Open a pull request to `main` and ask at least one teammate to review it.
 
 See [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) and [docs/GITHUB_SETUP.md](docs/GITHUB_SETUP.md).
+
+For the SBA301-oriented folder conventions and team ownership rules, see [docs/PROJECT_STRUCTURE_SBA301.md](docs/PROJECT_STRUCTURE_SBA301.md).
+
+> Version note: this starter currently uses Spring Boot 4.1 and React with TypeScript. SBA301 does not publish a single mandatory folder tree publicly. If your lecturer provides a Spring Boot 3 or JavaScript-only starter/rubric, use that exact version and language requirement before developing domain features; the same folder responsibilities still apply.

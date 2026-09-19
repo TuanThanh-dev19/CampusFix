@@ -3,7 +3,7 @@
 Add immutable, ordered migrations here, for example:
 
 ```text
-V1__create_identity_tables.sql
+V1__create_user_and_role_tables.sql
 V2__create_location_and_asset_tables.sql
 V3__create_dynamic_category_tables.sql
 V4__create_ticket_workflow_tables.sql

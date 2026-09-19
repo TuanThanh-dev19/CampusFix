@@ -1,12 +1,12 @@
 import { createBrowserRouter, Navigate } from 'react-router'
 import { LoginPage } from '../features/auth/pages/LoginPage'
 import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
+import { HomePage } from '../features/home/pages/HomePage'
 import { TicketListPage } from '../features/tickets/pages/TicketListPage'
-import { AppLayout } from '../layouts/AppLayout'
-import { ProtectedRoute } from '../routes/ProtectedRoute'
-import { RequireRole } from '../routes/RequireRole'
-import { HomePage } from '../shared/components/HomePage'
 import { PlaceholderPage } from '../shared/components/PlaceholderPage'
+import { AppLayout } from '../shared/layouts/AppLayout'
+import { ProtectedRoute } from './routes/ProtectedRoute'
+import { RequireRole } from './routes/RequireRole'
 
 export const router = createBrowserRouter([
   {

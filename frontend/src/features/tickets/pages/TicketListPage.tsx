@@ -1,29 +1,34 @@
-import { Button, Card, Container, Form, InputGroup, Stack } from 'react-bootstrap'
+import { useState } from 'react'
+import { Button, Card, Container, Stack } from 'react-bootstrap'
+import { TicketFilters } from '../components/TicketFilters'
+import type { TicketStatus } from '../types/ticket'
 
 export function TicketListPage() {
+  const [keyword, setKeyword] = useState('')
+  const [status, setStatus] = useState<TicketStatus | ''>('')
+
   return (
     <Container className="page-container">
       <Stack direction="horizontal" className="justify-content-between mb-4">
         <div>
           <h1 className="h2 mb-1">Tickets</h1>
-          <p className="text-secondary mb-0">Search, filter, sort, and paginate tickets here.</p>
+          <p className="text-secondary mb-0">
+            Search, filter, sort, and paginate tickets here.
+          </p>
         </div>
         <Button>Create ticket</Button>
       </Stack>
       <Card className="shadow-sm">
         <Card.Body>
-          <InputGroup>
-            <Form.Control aria-label="Search tickets" placeholder="Search by code or description" />
-            <Form.Select aria-label="Filter by status" defaultValue="">
-              <option value="">All statuses</option>
-              <option value="SUBMITTED">Submitted</option>
-              <option value="ASSIGNED">Assigned</option>
-              <option value="IN_PROGRESS">In progress</option>
-              <option value="RESOLVED">Resolved</option>
-            </Form.Select>
-          </InputGroup>
+          <TicketFilters
+            keyword={keyword}
+            status={status}
+            onKeywordChange={setKeyword}
+            onStatusChange={setStatus}
+          />
           <p className="text-secondary text-center my-5">
-            Connect this page to <code>GET /api/v1/tickets</code> with a feature query hook.
+            Connect this page to <code>useTickets</code> after the ticket API is
+            implemented.
           </p>
         </Card.Body>
       </Card>
