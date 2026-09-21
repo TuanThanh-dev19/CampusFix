@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { AuthContext } from './auth-context'
 
-const SESSION_KEY = 'campusfix.demo-user'
+const SESSION_KEY = 'nexora.demo-user'
 
 function readDemoUser() {
   const stored = sessionStorage.getItem(SESSION_KEY)
@@ -20,7 +20,7 @@ export function AuthProvider({ children }) {
     const demoUser = {
       id: 'demo-user',
       email,
-      displayName: email.split('@')[0] || 'CampusFix User',
+      displayName: email.split('@')[0] || 'Nexora User',
       roles: [role],
     }
     sessionStorage.setItem(SESSION_KEY, JSON.stringify(demoUser))
@@ -28,8 +28,8 @@ export function AuthProvider({ children }) {
   }, [])
 
   useEffect(() => {
-    window.addEventListener('campusfix:unauthorized', logout)
-    return () => window.removeEventListener('campusfix:unauthorized', logout)
+    window.addEventListener('nexora:unauthorized', logout)
+    return () => window.removeEventListener('nexora:unauthorized', logout)
   }, [logout])
 
   const value = useMemo(

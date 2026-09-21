@@ -1,9 +1,9 @@
-# CampusFix architecture
+# Nexora architecture
 
 ## Backend modules
 
 ```text
-com.campusfix
+com.nexora
 ├── config         Security, CORS, OpenAPI, persistence configuration
 ├── common         Cross-cutting exceptions, health, pagination, storage
 ├── auth           Login, access-token handling and current user

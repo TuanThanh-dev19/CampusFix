@@ -1,4 +1,4 @@
-# CampusFix backend
+# Nexora backend
 
 This is the Spring Boot REST API. It uses a package-by-feature modular monolith.
 

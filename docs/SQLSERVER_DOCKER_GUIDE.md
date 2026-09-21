@@ -1,4 +1,4 @@
-# Hướng dẫn SQL Server và Docker cho nhóm CampusFix
+# Hướng dẫn SQL Server và Docker cho nhóm Nexora
 
 Tài liệu này là quy trình chung cho cả 5 thành viên. Mục tiêu là mỗi người có một SQL Server local giống nhau, schema được Flyway tạo tự động và không cần cài SQL Server trực tiếp vào Windows.
 
@@ -10,12 +10,12 @@ Tài liệu này là quy trình chung cho cả 5 thành viên. Mục tiêu là m
 - **Docker Compose**: đọc `compose.yaml` và khởi động các service theo cùng cấu hình.
 - **Flyway**: chạy các migration T-SQL có thứ tự để tạo và nâng cấp schema.
 
-CampusFix có hai service:
+Nexora có hai service:
 
 | Service | Vai trò | Trạng thái bình thường |
 |---|---|---|
 | `sqlserver` | Chạy SQL Server 2022 Developer | `healthy` |
-| `sqlserver-init` | Chạy một lần để tạo database `campusfix` | `Exited (0)` |
+| `sqlserver-init` | Chạy một lần để tạo database `nexora` | `Exited (0)` |
 
 `sqlserver-init` kết thúc với mã `0` là thành công, không phải lỗi. Sau đó Spring Boot/Flyway mới tạo các bảng ứng dụng.
 
@@ -70,7 +70,7 @@ Kiểm tra database đã được tạo mà không đưa password vào lịch s�
 docker compose exec sqlserver /bin/bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -Q "SELECT name FROM sys.databases"'
 ```
 
-Danh sách phải có `campusfix`.
+Danh sách phải có `nexora`.
 
 ## 4. Chạy project hằng ngày
 
@@ -117,7 +117,7 @@ Lần sau `docker compose up -d` sẽ sử dụng lại dữ liệu cũ.
 | Authentication | SQL Server Authentication |
 | Login | `sa` |
 | Password | `MSSQL_SA_PASSWORD` trong `.env` |
-| Database | `campusfix` |
+| Database | `nexora` |
 | Encrypt | Bật |
 | Trust server certificate | Bật, chỉ cho local |
 
@@ -126,7 +126,7 @@ Nếu dùng Azure Data Studio hoặc extension SQL Server của VS Code, dùng c
 JDBC URL mặc định:
 
 ```text
-jdbc:sqlserver://localhost:1433;databaseName=campusfix;encrypt=true;trustServerCertificate=true
+jdbc:sqlserver://localhost:1433;databaseName=nexora;encrypt=true;trustServerCertificate=true
 ```
 
 Trong môi trường deploy, không dùng `trustServerCertificate=true`; cần chứng chỉ TLS được tin cậy.
@@ -138,7 +138,7 @@ File `.env` ở root được Docker Compose đọc, nhưng lệnh `mvnw spring-
 Nếu đổi password hoặc port, hãy cấu hình cả backend trong PowerShell:
 
 ```powershell
-$env:DB_URL='jdbc:sqlserver://localhost:1434;databaseName=campusfix;encrypt=true;trustServerCertificate=true'
+$env:DB_URL='jdbc:sqlserver://localhost:1434;databaseName=nexora;encrypt=true;trustServerCertificate=true'
 $env:DB_USERNAME='sa'
 $env:DB_PASSWORD='mật-khẩu-local-của-bạn'
 .\mvnw.cmd spring-boot:run
@@ -226,7 +226,7 @@ Mật khẩu `sa` phải có ít nhất 8 ký tự và đáp ứng tối thiểu
 
 ```env
 MSSQL_PORT=1434
-DB_URL=jdbc:sqlserver://localhost:1434;databaseName=campusfix;encrypt=true;trustServerCertificate=true
+DB_URL=jdbc:sqlserver://localhost:1434;databaseName=nexora;encrypt=true;trustServerCertificate=true
 ```
 
 Sau đó cấu hình cùng `DB_URL` cho Spring Boot chạy ngoài Docker.
@@ -235,7 +235,7 @@ Sau đó cấu hình cùng `DB_URL` cho Spring Boot chạy ngoài Docker.
 
 Password hệ thống đã được ghi trong volume ở lần khởi tạo đầu. Đổi `.env` không tự đổi password trong database cũ. Hãy dùng lại password cũ hoặc, nếu dữ liệu local không cần giữ, chủ động reset bằng `docker compose down -v`.
 
-### `Cannot open database campusfix`
+### `Cannot open database nexora`
 
 Kiểm tra service init:
 
@@ -258,7 +258,7 @@ docker compose logs sqlserver-init
 - [ ] Copy `.env.example` thành `.env`.
 - [ ] `docker compose config` hợp lệ.
 - [ ] `sqlserver` healthy và `sqlserver-init` exited 0.
-- [ ] Database `campusfix` xuất hiện trong câu query kiểm tra.
+- [ ] Database `nexora` xuất hiện trong câu query kiểm tra.
 - [ ] Backend chạy và Flyway không báo lỗi.
 - [ ] Frontend gọi được backend.
 - [ ] Không commit `.env`, password, token hoặc file dữ liệu local.

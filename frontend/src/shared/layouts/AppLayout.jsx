@@ -10,7 +10,7 @@ export function AppLayout() {
       <Navbar bg="dark" data-bs-theme="dark" expand="lg">
         <Container>
           <Navbar.Brand as={NavLink} to="/">
-            CampusFix
+            Nexora
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="main-navigation" />
           <Navbar.Collapse id="main-navigation">
