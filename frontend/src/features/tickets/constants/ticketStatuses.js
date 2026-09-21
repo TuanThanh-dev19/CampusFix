@@ -1,0 +1,10 @@
+export const TICKET_STATUSES = [
+  'SUBMITTED',
+  'UNDER_REVIEW',
+  'ASSIGNED',
+  'IN_PROGRESS',
+  'RESOLVED',
+  'CLOSED',
+  'REJECTED',
+  'CANCELLED',
+]

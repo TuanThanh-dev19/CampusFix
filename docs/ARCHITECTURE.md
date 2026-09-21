@@ -39,9 +39,9 @@ Keep the application as a modular monolith for the eight-week MVP. Microservices
 ```text
 src/
 ├── app/
-│   ├── router.tsx          Route-to-page mapping
-│   ├── providers.tsx       Query and authentication providers
-│   ├── queryClient.ts
+│   ├── router.jsx          Route-to-page mapping
+│   ├── providers.jsx       Query and authentication providers
+│   ├── queryClient.js
 │   └── routes/             ProtectedRoute and RequireRole
 ├── features/
 │   ├── auth/
@@ -52,9 +52,9 @@ src/
 │   ├── tickets/
 │   │   ├── api/
 │   │   ├── components/
+│   │   ├── constants/
 │   │   ├── hooks/
 │   │   ├── pages/
-│   │   └── types/
 │   ├── assets/
 │   ├── categories/
 │   ├── dashboard/
@@ -65,16 +65,17 @@ src/
 │   ├── hooks/
 │   ├── layouts/
 │   ├── styles/
-│   ├── types/
+│   ├── constants/
 │   └── utils/
 ├── test/                   Shared test setup and mocks
-├── App.tsx
-└── main.tsx                Browser entry point
+├── App.jsx
+└── main.jsx                Browser entry point
 ```
 
 Rules:
 
 - Pages and UI components do not call Axios directly.
+- Use `.jsx` for files that render JSX and `.js` for plain JavaScript modules. The frontend does not use TypeScript or TSX.
 - A feature keeps its API calls and query hooks within that feature.
 - A page represents a complete routed screen; `components` contains smaller reusable UI pieces.
 - TanStack Query owns server state; Context owns only small client state such as the authenticated user.
@@ -87,7 +88,7 @@ Rules:
 SUBMITTED → UNDER_REVIEW → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED
 ```
 
-The MVP also supports `REJECTED` and `CANCELLED`. `DUPLICATE` and `REOPENED` are optional extensions. Implement transitions as tested Java policy code. Do not expose a generic endpoint that lets the client assign any status.
+The MVP also supports `REJECTED` and `CANCELLED`. `DUPLICATE` and `REOPENED` are optional extensions. When reopening a resolved ticket, clear its current `resolved_at`; the previous resolution event remains in `ticket_status_history`. Implement transitions as tested Java policy code. Do not expose a generic endpoint that lets the client assign any status.
 
 ## Dynamic category forms
 
