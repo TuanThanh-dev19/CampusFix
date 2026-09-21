@@ -28,7 +28,7 @@ BEGIN
     WHERE OBJECT_ID(N'dbo.' + expected.table_name, N'U') IS NULL
     ORDER BY expected.table_name;
 
-    THROW 51000, 'CampusFix schema is incomplete. Run the backend so Flyway can apply every migration.', 1;
+    THROW 51000, 'Nexora schema is incomplete. Run the backend so Flyway can apply every migration.', 1;
 END;
 
 DECLARE @expected_foreign_keys TABLE (constraint_name SYSNAME NOT NULL PRIMARY KEY);
@@ -84,7 +84,7 @@ BEGIN
           AND actual.is_disabled = 0
           AND actual.is_not_trusted = 0
     );
-    THROW 51002, 'CampusFix schema has a missing, disabled, or untrusted required foreign key.', 1;
+    THROW 51002, 'Nexora schema has a missing, disabled, or untrusted required foreign key.', 1;
 END;
 
 IF EXISTS (
@@ -106,7 +106,7 @@ BEGIN
           AND actual.is_disabled = 0
           AND actual.is_not_trusted = 0
     );
-    THROW 51003, 'CampusFix schema has a missing, disabled, or untrusted required check constraint.', 1;
+    THROW 51003, 'Nexora schema has a missing, disabled, or untrusted required check constraint.', 1;
 END;
 
 IF EXISTS (
@@ -124,7 +124,7 @@ BEGIN
         SELECT 1 FROM sys.indexes actual
         WHERE actual.name = expected.index_name AND actual.is_disabled = 0
     );
-    THROW 51004, 'CampusFix schema is missing or has disabled a required index.', 1;
+    THROW 51004, 'Nexora schema is missing or has disabled a required index.', 1;
 END;
 
 IF NOT EXISTS (

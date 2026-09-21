@@ -22,7 +22,7 @@ export function HomePage() {
       <Badge bg="primary" className="mb-3">
         SBA301 starter
       </Badge>
-      <h1>CampusFix</h1>
+      <h1>Nexora</h1>
       <p className="lead text-secondary">
         Campus incident reporting, maintenance workflow, and equipment tracking
         in one focused eight-week project.

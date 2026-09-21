@@ -18,7 +18,7 @@ export function LoginPage() {
     <Container className="page-container page-narrow">
       <Card className="shadow-sm">
         <Card.Body className="p-4">
-          <h1 className="h3">CampusFix sign in</h1>
+          <h1 className="h3">Nexora sign in</h1>
           <Alert variant="warning" className="small">
             This starter uses a UI-only demo session. Replace{' '}
             <code>loginDemo</code> with the Spring Boot authentication API

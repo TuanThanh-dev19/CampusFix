@@ -1,8 +1,8 @@
-# CampusFix SQL Server schema
+# Nexora SQL Server schema
 
 ## Nguồn khởi tạo database
 
-CampusFix dùng Flyway làm nguồn duy nhất để tạo và nâng cấp bảng ứng dụng:
+Nexora dùng Flyway làm nguồn duy nhất để tạo và nâng cấp bảng ứng dụng:
 
 ```text
 backend/src/main/resources/db/migration/
@@ -15,13 +15,13 @@ backend/src/main/resources/db/migration/
 └── V7__seed_skill_and_sla_reference_data.sql
 ```
 
-Docker service `sqlserver-init` chỉ tạo database rỗng `campusfix`. Khi backend
+Docker service `sqlserver-init` chỉ tạo database rỗng `nexora`. Khi backend
 khởi động, Flyway tự chạy lần lượt V1 đến V7 để tạo bảng, khóa ngoại, constraint,
 index và dữ liệu nền.
 
 ## File SQL gộp để chạy thủ công
 
-File `infrastructure/sqlserver/campusfix_full_schema.sql` chứa toàn bộ nội dung
+File `infrastructure/sqlserver/nexora_full_schema.sql` chứa toàn bộ nội dung
 V1 đến V7 trong một file duy nhất. File này dành cho việc nộp bài, đọc schema,
 hoặc khởi tạo thủ công bằng SSMS/`sqlcmd` trên database mới và rỗng.
 
@@ -29,17 +29,17 @@ Không chạy file gộp trên database đã được Flyway quản lý, và kh�
 thời hai cách khởi tạo trên cùng database:
 
 - Phát triển Spring Boot: dùng Flyway bằng cách khởi động backend.
-- Khởi tạo thủ công độc lập: dùng `campusfix_full_schema.sql` một lần trên
+- Khởi tạo thủ công độc lập: dùng `nexora_full_schema.sql` một lần trên
   database rỗng.
 
 Chạy file gộp trong SQL Server Docker:
 
 ```powershell
-docker compose exec -T sqlserver /bin/bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -b -d master -i /opt/campusfix/sql/campusfix_full_schema.sql'
+docker compose exec -T sqlserver /bin/bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -b -d master -i /opt/nexora/sql/nexora_full_schema.sql'
 ```
 
 Trong SSMS, mở file, kết nối SQL Server và chọn **Execute**. Script tự tạo
-database `campusfix` nếu database chưa tồn tại và dừng với lỗi nếu database đã
+database `nexora` nếu database chưa tồn tại và dừng với lỗi nếu database đã
 có bảng, nhằm tránh ghi đè dữ liệu.
 
 Khi nhóm thêm migration V8 trở lên, file gộp cũng phải được cập nhật nếu vẫn
@@ -111,7 +111,7 @@ kiểm tra schema bằng SQL Server container:
 
 ```powershell
 cd ..
-docker compose exec -T sqlserver /bin/bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -b -d campusfix -i /opt/campusfix/sql/verify-schema.sql'
+docker compose exec -T sqlserver /bin/bash -c '/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P "$MSSQL_SA_PASSWORD" -C -b -d nexora -i /opt/nexora/sql/verify-schema.sql'
 ```
 
 File được mount read-only vào container bởi `compose.yaml`. Cách kiểm tra độc

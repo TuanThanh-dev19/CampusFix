@@ -13,7 +13,7 @@ httpClient.interceptors.response.use(
   (response) => response,
   (error) => {
     if (axios.isAxiosError(error) && error.response?.status === 401) {
-      window.dispatchEvent(new Event('campusfix:unauthorized'))
+      window.dispatchEvent(new Event('nexora:unauthorized'))
     }
     return Promise.reject(error)
   },

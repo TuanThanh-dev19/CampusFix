@@ -1,6 +1,6 @@
-# CampusFix
+# Nexora
 
-CampusFix is a campus incident reporting, maintenance workflow, and equipment tracking platform. The repository is a modular monolith containing one Spring Boot REST API and one React single-page application.
+Nexora is a campus incident reporting, maintenance workflow, and equipment tracking platform. The repository is a modular monolith containing one Spring Boot REST API and one React single-page application.
 
 ## Technology
 
@@ -13,7 +13,7 @@ CampusFix is a campus incident reporting, maintenance workflow, and equipment tr
 ## Repository layout
 
 ```text
-campusfix/
+nexora/
 ├── backend/          Spring Boot REST API and Flyway migrations
 ├── frontend/         React SPA
 ├── docs/             Architecture and team documentation
@@ -41,7 +41,7 @@ docker compose ps -a
 Expected result:
 
 - `sqlserver` becomes `healthy`.
-- `sqlserver-init` becomes `Exited (0)` after creating the `campusfix` database. This is normal.
+- `sqlserver-init` becomes `Exited (0)` after creating the `nexora` database. This is normal.
 - Spring Boot then runs Flyway to create tables, constraints, indexes, and reference data.
 
 Start the backend:
@@ -75,14 +75,14 @@ Server: localhost,1433
 Authentication: SQL Server Authentication
 Login: sa
 Password: value of MSSQL_SA_PASSWORD in .env
-Database: campusfix
+Database: nexora
 Trust server certificate: enabled for local development only
 ```
 
 Local JDBC URL:
 
 ```text
-jdbc:sqlserver://localhost:1433;databaseName=campusfix;encrypt=true;trustServerCertificate=true
+jdbc:sqlserver://localhost:1433;databaseName=nexora;encrypt=true;trustServerCertificate=true
 ```
 
 See [docs/SQLSERVER_DOCKER_GUIDE.md](docs/SQLSERVER_DOCKER_GUIDE.md) for the complete team setup, daily commands, migrations, troubleshooting, and safe reset procedure.

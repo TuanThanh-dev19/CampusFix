@@ -1,10 +1,10 @@
-# Cấu trúc CampusFix phù hợp SBA301
+# Cấu trúc Nexora phù hợp SBA301
 
 ## Kết luận kiểm tra
 
 Nguồn FPT công khai xác nhận SBA301 là môn **Integrate Single Page Application with Spring Boot**. Không có nguồn công khai nào quy định một cây thư mục duy nhất bắt buộc cho mọi lớp. Vì vậy, cấu trúc của nhóm cần làm rõ được các nội dung chính: React SPA, component, route, hooks/context, gọi REST API, Spring Controller–Service–Repository, validation, authentication/authorization và kiểm thử.
 
-CampusFix sử dụng **feature-first modular monolith** và ReactJS bằng **JavaScript/JSX**. Mỗi thành viên có thể phụ trách một nghiệp vụ xuyên suốt từ database, REST API đến React UI mà không phải cùng sửa một số file trung tâm quá lớn.
+Nexora sử dụng **feature-first modular monolith** và ReactJS bằng **JavaScript/JSX**. Mỗi thành viên có thể phụ trách một nghiệp vụ xuyên suốt từ database, REST API đến React UI mà không phải cùng sửa một số file trung tâm quá lớn.
 
 ## Frontend
 
@@ -60,8 +60,8 @@ Không tạo hàng loạt thư mục rỗng. Khi feature cần file thuộc lo�
 ## Backend
 
 ```text
-backend/src/main/java/com/campusfix/
-├── CampusFixBackendApplication.java
+backend/src/main/java/com/nexora/
+├── NexoraBackendApplication.java
 ├── config/
 ├── common/
 │   ├── exception/
