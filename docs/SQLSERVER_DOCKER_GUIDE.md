@@ -165,10 +165,10 @@ Quy tắc bắt buộc:
 7. PR thay đổi schema phải gồm migration, code entity/repository liên quan và test.
 8. Reviewer phải thử trên database trống hoặc bằng SQL Server Testcontainers.
 
-Ví dụ migration tiếp theo:
+Ví dụ migration tiếp theo sau baseline hiện tại:
 
 ```text
-V6__add_ticket_search_indexes.sql
+V8__add_ticket_search_indexes.sql
 ```
 
 Form category đã publish cũng bất biến. Admin sửa form bằng cách tạo version mới; ticket cũ vẫn trỏ đúng version đã dùng.

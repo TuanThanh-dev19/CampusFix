@@ -8,6 +8,8 @@ V2__create_location_and_asset_tables.sql
 V3__create_dynamic_category_tables.sql
 V4__create_ticket_workflow_tables.sql
 V5__seed_reference_data.sql
+V6__complete_erd_support_tables.sql
+V7__seed_skill_and_sla_reference_data.sql
 ```
 
 Rules for the team:
@@ -20,3 +22,8 @@ Rules for the team:
 - Coordinate the next migration number in the team board before creating a file.
 
 Published category form versions are immutable. Changing a dynamic form requires a new form version so old tickets remain readable.
+
+`V6` completes the ERD with technician profiles, skills, service areas,
+form-version defaults, shared SLA policies, audit logs, and optional reviewed violation/appeal
+tables. `V7` seeds skills and SLA policies, then connects the four starter forms
+to those defaults.
