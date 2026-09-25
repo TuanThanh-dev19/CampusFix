@@ -10,6 +10,6 @@ The ERD-to-physical-schema mapping is documented at `docs/DATABASE_SCHEMA.md`.
 After Flyway runs, `verify-schema.sql` can be executed with `sqlcmd` or SSMS to
 check that all expected tables and constraints exist.
 
-`nexora_full_schema.sql` is the standalone, single-file V1-V7 bundle for an
+`nexora_full_schema.sql` is the standalone, single-file V1-V8 bundle for an
 empty database. It is provided for manual SSMS/sqlcmd use and submission only;
 do not run it on the same database that Spring Boot/Flyway manages.

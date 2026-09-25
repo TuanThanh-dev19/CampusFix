@@ -9,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-@SpringBootTest
+@SpringBootTest(properties = "spring.data.mongodb.auto-index-creation=false")
 @Import(TestcontainersConfiguration.class)
 @EnabledIfEnvironmentVariable(named = "RUN_SQLSERVER_IT", matches = "(?i)true")
 class SqlServerMigrationIntegrationTest {
@@ -30,11 +30,24 @@ class SqlServerMigrationIntegrationTest {
 					'field_definitions', 'field_options',
 					'tickets', 'ticket_field_values', 'ticket_assignments',
 					'ticket_status_history', 'work_logs', 'ticket_attachments',
-					'ticket_comments', 'ticket_feedback', 'ticket_accuracy_reviews',
-					'notifications', 'technician_profiles', 'skills',
+					'ticket_feedback', 'ticket_accuracy_reviews',
+					'technician_profiles', 'skills',
 					'technician_skills', 'technician_service_areas', 'sla_policies',
-					'audit_logs', 'violation_cases', 'violation_appeals'
+					'violation_cases', 'violation_appeals'
 				)
+				""", Integer.class);
+		Integer removedDocumentTableCount = jdbcTemplate.queryForObject("""
+				SELECT COUNT(*)
+				FROM sys.tables
+				WHERE schema_id = SCHEMA_ID('dbo')
+				  AND name IN ('audit_logs', 'ticket_comments', 'notifications')
+				""", Integer.class);
+		Integer totalApplicationTableCount = jdbcTemplate.queryForObject("""
+				SELECT COUNT(*)
+				FROM sys.tables
+				WHERE schema_id = SCHEMA_ID('dbo')
+				  AND is_ms_shipped = 0
+				  AND name <> 'flyway_schema_history'
 				""", Integer.class);
 		Integer roleCount = jdbcTemplate.queryForObject(
 				"SELECT COUNT(*) FROM dbo.roles", Integer.class);
@@ -79,10 +92,12 @@ class SqlServerMigrationIntegrationTest {
 		Integer latestSuccessfulMigration = jdbcTemplate.queryForObject("""
 				SELECT COUNT(*)
 				FROM dbo.flyway_schema_history
-				WHERE version = '7' AND success = 1
+				WHERE version = '8' AND success = 1
 				""", Integer.class);
 
-		assertThat(tableCount).isEqualTo(29);
+		assertThat(tableCount).isEqualTo(26);
+		assertThat(totalApplicationTableCount).isEqualTo(26);
+		assertThat(removedDocumentTableCount).isZero();
 		assertThat(roleCount).isEqualTo(4);
 		assertThat(categoryCount).isGreaterThanOrEqualTo(4);
 		assertThat(skillCount).isGreaterThanOrEqualTo(4);

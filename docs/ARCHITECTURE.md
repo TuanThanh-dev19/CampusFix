@@ -12,10 +12,21 @@ com.nexora
 ├── asset          Equipment type, equipment and status history
 ├── category       Incident category, form versions and dynamic validation
 ├── ticket         Report, assignment, workflow, work log and attachments
+├── notification   MongoDB notification documents and delivery state
+├── audit          Append-only MongoDB audit events
+├── migration      Idempotent legacy SQL-to-MongoDB backfill
 └── dashboard      Aggregated metrics and SLA reports
 ```
 
-Feedback belongs to the ticket module in the MVP. Notification, audit, and reviewed false-report cases are optional modules and should only be added when the team actually implements them.
+Feedback belongs to the ticket module in the MVP. Audit events, ticket comments,
+and notifications use Spring Data MongoDB. All strongly relational entities
+remain in SQL Server and use JPA/JDBC. Cross-database references are scalar SQL
+IDs validated by the service layer, never MongoDB `DBRef` values.
+
+Writes that describe an already committed SQL transaction are published as
+application events and persisted to MongoDB with an `AFTER_COMMIT` listener.
+MongoDB failures are logged explicitly and cannot roll back the completed SQL
+transaction.
 
 Inside each feature, add only the layers it needs:
 

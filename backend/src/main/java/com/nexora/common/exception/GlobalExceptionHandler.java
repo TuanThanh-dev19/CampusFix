@@ -20,7 +20,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BusinessRuleException.class)
     ProblemDetail handleBusinessRule(BusinessRuleException exception) {
-        return problem(HttpStatus.UNPROCESSABLE_CONTENT, "Business rule rejected",
+        return problem(HttpStatus.UNPROCESSABLE_ENTITY, "Business rule rejected",
                 exception.getMessage(), "business-rule-violation");
     }
 

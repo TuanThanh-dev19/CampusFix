@@ -13,8 +13,8 @@ VALUES
     ('category_form_versions'), ('field_definitions'), ('field_options'),
     ('sla_policies'), ('tickets'), ('ticket_field_values'),
     ('ticket_assignments'), ('ticket_status_history'), ('work_logs'),
-    ('ticket_attachments'), ('ticket_comments'), ('ticket_feedback'),
-    ('ticket_accuracy_reviews'), ('notifications'), ('audit_logs'),
+    ('ticket_attachments'), ('ticket_feedback'),
+    ('ticket_accuracy_reviews'),
     ('violation_cases'), ('violation_appeals');
 
 IF EXISTS (
@@ -30,6 +30,14 @@ BEGIN
 
     THROW 51000, 'Nexora schema is incomplete. Run the backend so Flyway can apply every migration.', 1;
 END;
+
+IF EXISTS (
+    SELECT 1
+    FROM sys.tables
+    WHERE schema_id = SCHEMA_ID(N'dbo')
+      AND name IN (N'audit_logs', N'ticket_comments', N'notifications')
+)
+    THROW 51001, 'Legacy document tables must not remain in SQL Server after V8.', 1;
 
 DECLARE @expected_foreign_keys TABLE (constraint_name SYSNAME NOT NULL PRIMARY KEY);
 INSERT INTO @expected_foreign_keys (constraint_name)
@@ -130,15 +138,27 @@ END;
 IF NOT EXISTS (
     SELECT 1
     FROM dbo.flyway_schema_history
-    WHERE version = '7' AND success = 1
+    WHERE version = '8' AND success = 1
 )
-    THROW 51005, 'Flyway version 7 was not applied successfully.', 1;
+    THROW 51005, 'Flyway version 8 was not applied successfully.', 1;
 
 SELECT DB_NAME() AS database_name,
        COUNT(*) AS verified_application_table_count
 FROM sys.tables actual
 WHERE actual.schema_id = SCHEMA_ID(N'dbo')
   AND actual.name IN (SELECT table_name FROM @expected_tables);
+
+IF (SELECT COUNT(*) FROM @expected_tables) <> 26
+    THROW 51006, 'Schema verifier must define exactly 26 application tables.', 1;
+
+IF (
+    SELECT COUNT(*)
+    FROM sys.tables
+    WHERE schema_id = SCHEMA_ID(N'dbo')
+      AND is_ms_shipped = 0
+      AND name <> N'flyway_schema_history'
+) <> 26
+    THROW 51007, 'SQL Server must contain exactly 26 Nexora application tables after V8.', 1;
 
 SELECT installed_rank, version, description, success
 FROM dbo.flyway_schema_history
