@@ -1,4 +1,12 @@
-# Nexora SQL Server schema
+# Nexora persistence schema
+
+Nexora uses two sources of truth:
+
+- SQL Server stores the 26 relational tables, including users and tickets.
+- MongoDB stores `audit_events`, `ticket_comments`, and `notifications`.
+
+MongoDB references SQL records only through numeric IDs. There are no `DBRef`
+links and no duplicated SQL user or ticket documents.
 
 ## Nguồn khởi tạo database
 
@@ -12,17 +20,19 @@ backend/src/main/resources/db/migration/
 ├── V4__create_ticket_workflow_tables.sql
 ├── V5__seed_reference_data.sql
 ├── V6__complete_erd_support_tables.sql
-└── V7__seed_skill_and_sla_reference_data.sql
+├── V7__seed_skill_and_sla_reference_data.sql
+└── V8__remove_document_data_tables_from_sql.sql
 ```
 
 Docker service `sqlserver-init` chỉ tạo database rỗng `nexora`. Khi backend
-khởi động, Flyway tự chạy lần lượt V1 đến V7 để tạo bảng, khóa ngoại, constraint,
-index và dữ liệu nền.
+khởi động, Flyway tự chạy lần lượt V1 đến V8. V1–V7 không được sửa vì checksum
+đã được Flyway ghi nhận. V8 loại bỏ ba bảng document cũ sau khi chúng rỗng hoặc
+kết quả backfill MongoDB đã được xác minh.
 
 ## File SQL gộp để chạy thủ công
 
 File `infrastructure/sqlserver/nexora_full_schema.sql` chứa toàn bộ nội dung
-V1 đến V7 trong một file duy nhất. File này dành cho việc nộp bài, đọc schema,
+V1 đến V8 trong một file duy nhất. File này dành cho việc nộp bài, đọc schema,
 hoặc khởi tạo thủ công bằng SSMS/`sqlcmd` trên database mới và rỗng.
 
 Không chạy file gộp trên database đã được Flyway quản lý, và không dùng đồng
@@ -54,10 +64,30 @@ chính thức của backend.
 | Kỹ thuật viên | `technician_profiles`, `skills`, `technician_skills`, `technician_service_areas` |
 | Địa điểm và thiết bị | `locations`, `equipment_types`, `assets`, `asset_status_history` |
 | Category động | `incident_categories`, `category_form_versions`, `field_definitions`, `field_options` |
-| Ticket workflow | `tickets`, `ticket_field_values`, `ticket_assignments`, `ticket_status_history`, `work_logs`, `ticket_comments`, `ticket_attachments` |
-| Hậu xử lý | `ticket_feedback`, `notifications`, `audit_logs` |
+| Ticket workflow | `tickets`, `ticket_field_values`, `ticket_assignments`, `ticket_status_history`, `work_logs`, `ticket_attachments` |
+| Hậu xử lý | `ticket_feedback` |
 | Kiểm tra thông tin | `ticket_accuracy_reviews`, `violation_cases`, `violation_appeals` |
 | SLA | `sla_policies` |
+
+Sau V8, SQL Server có đúng 26 bảng ứng dụng. `flyway_schema_history` là bảng
+kỹ thuật của Flyway và không tính vào con số này.
+
+## MongoDB collections và document schema
+
+| Collection | Trường chính | Index |
+|---|---|---|
+| `audit_events` | `_id: ObjectId`, `legacySqlId?: Long`, `actorId?: Long`, `action: String`, `targetType: String`, `targetId: Long`, `before?: Document`, `after?: Document`, `reason?: String`, `createdAt: Date` | `(targetType, targetId, createdAt desc)`, `(actorId, createdAt desc)`, unique sparse `legacySqlId` |
+| `ticket_comments` | `_id: ObjectId`, `legacySqlId?: Long`, `ticketId: Long`, `authorId: Long`, `body: String`, `visibility: PUBLIC\|INTERNAL`, `createdAt: Date`, `editedAt?: Date` | `(ticketId, createdAt asc)`, unique sparse `legacySqlId` |
+| `notifications` | `_id: ObjectId`, `legacySqlId?: Long`, `recipientId: Long`, `ticketId?: Long`, `notificationType: String`, `title: String`, `message: String`, `read: Boolean`, `readAt?: Date`, `createdAt: Date` | `(recipientId, read, createdAt desc)`, unique sparse `legacySqlId` |
+
+`legacySqlId` chỉ có ở document được chuyển từ SQL Server. Unique sparse index
+làm cho backfill có thể chạy lại an toàn. Các document mới dùng `_id` do MongoDB
+tạo và không ghi `legacySqlId`.
+
+Service tạo comment xác minh cả `ticketId` và `authorId` trong SQL Server.
+Service tạo notification xác minh `recipientId` và `ticketId` (nếu có). Audit
+phát sinh từ SQL transaction được ghi ở phase `AFTER_COMMIT`; lỗi MongoDB được
+log nhưng không rollback SQL transaction đã commit.
 
 Hai bảng `violation_cases` và `violation_appeals` thuộc scope P1. Chúng có sẵn
 trong schema để đúng ERD, nhưng nhóm có thể chưa làm API/UI cho chúng trong MVP.
@@ -102,9 +132,9 @@ cd backend
 .\mvnw.cmd spring-boot:run
 ```
 
-Khi backend khởi động lần đầu, log phải hiển thị Flyway migrate đến version `7`.
+Khi backend khởi động lần đầu, log phải hiển thị Flyway migrate đến version `8`.
 Không chạy lại hoặc sửa migration đã áp dụng; thay đổi schema tiếp theo phải tạo
-V8, V9, ...
+V9, V10, ...
 
 Sau khi migration hoàn tất, dừng backend bằng `Ctrl+C`, quay lại thư mục gốc và
 kiểm tra schema bằng SQL Server container:
@@ -123,3 +153,29 @@ $env:RUN_SQLSERVER_IT='true'
 .\mvnw.cmd -Dtest=SqlServerMigrationIntegrationTest test
 Remove-Item Env:RUN_SQLSERVER_IT
 ```
+
+MongoDB integration test dùng container thật:
+
+```powershell
+cd backend
+$env:RUN_MONGODB_IT='true'
+.\mvnw.cmd -Dtest=MongoPersistenceIntegrationTest test
+Remove-Item Env:RUN_MONGODB_IT
+```
+
+## Backfill database cũ
+
+V8 chỉ drop bảng khi cả ba bảng rỗng, hoặc database có extended property
+`NexoraMongoBackfillVerified` chứa đúng số record hiện tại. Với database đã có
+dữ liệu, chạy backend một lần với Flyway dừng ở V7:
+
+```powershell
+cd backend
+$env:MONGO_BACKFILL_ENABLED='true'
+.\mvnw.cmd spring-boot:run "-Dspring-boot.run.arguments=--spring.flyway.target=7"
+```
+
+Runner đọc ba bảng SQL, upsert theo `legacySqlId`, kiểm tra số document và ghi
+marker xác minh trong SQL Server. Sau log `MongoDB backfill verified`, dừng app,
+xóa biến tạm và khởi động lại bình thường để áp dụng V8. Nếu SQL count thay đổi
+sau lúc xác minh, V8 chủ động báo lỗi và không drop bảng.

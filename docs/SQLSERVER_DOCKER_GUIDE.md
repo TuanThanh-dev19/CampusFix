@@ -1,6 +1,8 @@
-# Hướng dẫn SQL Server và Docker cho nhóm Nexora
+# Hướng dẫn SQL Server, MongoDB và Docker cho nhóm Nexora
 
-Tài liệu này là quy trình chung cho cả 5 thành viên. Mục tiêu là mỗi người có một SQL Server local giống nhau, schema được Flyway tạo tự động và không cần cài SQL Server trực tiếp vào Windows.
+Tài liệu này là quy trình chung cho cả 5 thành viên. Mỗi máy chạy cùng SQL Server
+và MongoDB bằng Docker; schema SQL do Flyway quản lý, còn Spring Data tạo các
+collection/index MongoDB.
 
 ## 1. Các khái niệm cần hiểu
 
@@ -10,12 +12,13 @@ Tài liệu này là quy trình chung cho cả 5 thành viên. Mục tiêu là m
 - **Docker Compose**: đọc `compose.yaml` và khởi động các service theo cùng cấu hình.
 - **Flyway**: chạy các migration T-SQL có thứ tự để tạo và nâng cấp schema.
 
-Nexora có hai service:
+Nexora có ba service:
 
 | Service | Vai trò | Trạng thái bình thường |
 |---|---|---|
 | `sqlserver` | Chạy SQL Server 2022 Developer | `healthy` |
 | `sqlserver-init` | Chạy một lần để tạo database `nexora` | `Exited (0)` |
+| `mongodb` | Lưu audit event, ticket comment và notification | `healthy` |
 
 `sqlserver-init` kết thúc với mã `0` là thành công, không phải lỗi. Sau đó Spring Boot/Flyway mới tạo các bảng ứng dụng.
 
@@ -52,7 +55,7 @@ docker compose ps -a
 Theo dõi quá trình khởi động:
 
 ```powershell
-docker compose logs -f sqlserver sqlserver-init
+docker compose logs -f sqlserver sqlserver-init mongodb
 ```
 
 Nhấn `Ctrl+C` để thoát phần xem log; container vẫn tiếp tục chạy.
@@ -62,6 +65,7 @@ Kết quả mong đợi:
 ```text
 sqlserver        Up ... (healthy)
 sqlserver-init   Exited (0)
+mongodb          Up ... (healthy)
 ```
 
 Kiểm tra database đã được tạo mà không đưa password vào lịch sử lệnh của host:
@@ -133,7 +137,9 @@ Trong môi trường deploy, không dùng `trustServerCertificate=true`; cần c
 
 ## 6. `.env` và Spring Boot
 
-File `.env` ở root được Docker Compose đọc, nhưng lệnh `mvnw spring-boot:run` chạy trực tiếp trên Windows không tự đọc file này. Các giá trị mặc định trong `application.yml` đang khớp `.env.example`.
+File `.env` ở root được cả Docker Compose và Spring Boot đọc. Backend tìm file
+tại `.env` và `../.env`, nên lệnh chạy từ root hoặc thư mục `backend` đều dùng
+cùng cấu hình. Biến môi trường hoặc IntelliJ Run Configuration có độ ưu tiên cao hơn.
 
 Nếu đổi password hoặc port, hãy cấu hình cả backend trong PowerShell:
 
@@ -141,10 +147,13 @@ Nếu đổi password hoặc port, hãy cấu hình cả backend trong PowerShel
 $env:DB_URL='jdbc:sqlserver://localhost:1434;databaseName=nexora;encrypt=true;trustServerCertificate=true'
 $env:DB_USERNAME='sa'
 $env:DB_PASSWORD='mật-khẩu-local-của-bạn'
+$env:MONGO_URI='mongodb://user:password@localhost:27018/nexora?authSource=admin'
 .\mvnw.cmd spring-boot:run
 ```
 
-Hoặc đặt ba biến đó trong IntelliJ Run Configuration. Không commit `.env` hoặc mật khẩu thật.
+Hoặc đặt các biến đó trong IntelliJ Run Configuration. Nếu `27017` đã được dùng,
+đặt `MONGO_PORT=27018` và cập nhật cùng port trong `MONGO_URI`. Không commit `.env`
+hoặc mật khẩu thật.
 
 ## 7. Quy trình Flyway cho cả nhóm
 
@@ -168,7 +177,7 @@ Quy tắc bắt buộc:
 Ví dụ migration tiếp theo sau baseline hiện tại:
 
 ```text
-V8__add_ticket_search_indexes.sql
+V9__add_ticket_search_indexes.sql
 ```
 
 Form category đã publish cũng bất biến. Admin sửa form bằng cách tạo version mới; ticket cũ vẫn trỏ đúng version đã dùng.
@@ -258,6 +267,7 @@ docker compose logs sqlserver-init
 - [ ] Copy `.env.example` thành `.env`.
 - [ ] `docker compose config` hợp lệ.
 - [ ] `sqlserver` healthy và `sqlserver-init` exited 0.
+- [ ] `mongodb` healthy.
 - [ ] Database `nexora` xuất hiện trong câu query kiểm tra.
 - [ ] Backend chạy và Flyway không báo lỗi.
 - [ ] Frontend gọi được backend.
