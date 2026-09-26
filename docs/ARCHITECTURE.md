@@ -101,9 +101,17 @@ SUBMITTED → UNDER_REVIEW → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED
 
 The canonical SQL Server status set also includes `REOPENED`, `REJECTED`, and
 `CANCELLED`. Display labels remain separate from these stored/API codes. Ticket
-transition behavior, including reopening a resolved ticket, belongs to tested
-Java policy code and is implemented separately from the vocabulary contract. Do
-not expose a generic endpoint that lets the client assign any status.
+status and action vocabulary, transition rules, actor constraints, mandatory
+inputs, and expected side effects are defined by the pure Java contract in
+`com.nexora.ticket.workflow`. `SUBMIT` starts from the explicit `NEW_REQUEST`
+source rather than introducing a non-persisted ticket status.
+
+Workflow changes are action-driven. Later application services select an
+approved `TicketAction` and derive its target status from the contract; they do
+not accept an arbitrary target status. `CLOSED`, `REJECTED`, and `CANCELLED` are
+terminal in the MVP. Assignment changes, status-history writes, timestamps, and
+SLA calculation are documented by the contract as expected effects but remain
+the responsibility of later transactional services.
 
 ## Dynamic category forms
 
