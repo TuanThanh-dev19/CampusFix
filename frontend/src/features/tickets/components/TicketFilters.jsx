@@ -1,4 +1,5 @@
 import { Form, InputGroup } from 'react-bootstrap'
+import { TICKET_STATUS_OPTIONS } from '../constants/ticketStatuses'
 
 export function TicketFilters({
   keyword,
@@ -20,12 +21,11 @@ export function TicketFilters({
         onChange={(event) => onStatusChange(event.target.value)}
       >
         <option value="">All statuses</option>
-        <option value="SUBMITTED">Submitted</option>
-        <option value="UNDER_REVIEW">Under review</option>
-        <option value="ASSIGNED">Assigned</option>
-        <option value="IN_PROGRESS">In progress</option>
-        <option value="RESOLVED">Resolved</option>
-        <option value="CLOSED">Closed</option>
+        {TICKET_STATUS_OPTIONS.map(({ value, label }) => (
+          <option key={value} value={value}>
+            {label}
+          </option>
+        ))}
       </Form.Select>
     </InputGroup>
   )

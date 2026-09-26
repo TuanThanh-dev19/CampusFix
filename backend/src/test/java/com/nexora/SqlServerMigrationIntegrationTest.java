@@ -67,6 +67,7 @@ class SqlServerMigrationIntegrationTest {
 				SELECT COUNT(*)
 				FROM sys.foreign_keys
 				WHERE name IN (
+					'fk_user_roles_assigned_by',
 					'fk_technician_profiles_user',
 					'fk_category_form_versions_default_skill',
 					'fk_category_form_versions_default_sla',
@@ -76,6 +77,20 @@ class SqlServerMigrationIntegrationTest {
 					'fk_violation_cases_ticket',
 					'fk_violation_appeals_case'
 				)
+				""", Integer.class);
+		Integer normalizedEmailComputedColumnCount = jdbcTemplate.queryForObject("""
+				SELECT COUNT(*)
+				FROM sys.computed_columns
+				WHERE object_id = OBJECT_ID('dbo.app_users')
+				  AND name = 'normalized_email'
+				  AND is_persisted = 1
+				""", Integer.class);
+		Integer nullableAssignedByColumnCount = jdbcTemplate.queryForObject("""
+				SELECT COUNT(*)
+				FROM sys.columns
+				WHERE object_id = OBJECT_ID('dbo.user_roles')
+				  AND name = 'assigned_by'
+				  AND is_nullable = 1
 				""", Integer.class);
 		Integer requiredIndexCount = jdbcTemplate.queryForObject("""
 				SELECT COUNT(*)
@@ -103,7 +118,9 @@ class SqlServerMigrationIntegrationTest {
 		assertThat(skillCount).isGreaterThanOrEqualTo(4);
 		assertThat(slaPolicyCount).isGreaterThanOrEqualTo(4);
 		assertThat(configuredFormCount).isGreaterThanOrEqualTo(4);
-		assertThat(requiredForeignKeyCount).isEqualTo(8);
+		assertThat(requiredForeignKeyCount).isEqualTo(9);
+		assertThat(normalizedEmailComputedColumnCount).isEqualTo(1);
+		assertThat(nullableAssignedByColumnCount).isEqualTo(1);
 		assertThat(requiredIndexCount).isEqualTo(5);
 		assertThat(latestSuccessfulMigration).isEqualTo(1);
 	}

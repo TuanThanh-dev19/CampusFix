@@ -1,6 +1,7 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { Button, Form } from 'react-bootstrap'
 import { useForm } from 'react-hook-form'
+import { ROLE_CODES, ROLE_OPTIONS } from '../../../shared/constants/roles'
 import { loginSchema } from '../schemas/authSchema'
 
 export function LoginForm({ onSubmit }) {
@@ -10,7 +11,10 @@ export function LoginForm({ onSubmit }) {
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(loginSchema),
-    defaultValues: { email: 'student@campus.edu', role: 'USER' },
+    defaultValues: {
+      email: 'student@campus.edu',
+      role: ROLE_CODES.REQUESTER,
+    },
   })
 
   return (
@@ -30,10 +34,11 @@ export function LoginForm({ onSubmit }) {
       <Form.Group className="mb-3" controlId="role">
         <Form.Label>Demo role</Form.Label>
         <Form.Select {...register('role')}>
-          <option value="USER">User</option>
-          <option value="TECHNICIAN">Technician</option>
-          <option value="MANAGER">Manager</option>
-          <option value="ADMIN">Admin</option>
+          {ROLE_OPTIONS.map(({ value, label }) => (
+            <option key={value} value={value}>
+              {label}
+            </option>
+          ))}
         </Form.Select>
       </Form.Group>
 

@@ -126,9 +126,6 @@ The repository documentation states these intended boundaries:
 
 ## Current Architecture Risks / Alignment Items
 
-- Role vocabulary mismatch: database uses `REQUESTER`; frontend demo uses `USER`.
-- Frontend dynamic field types omit `MULTI_SELECT`, `DATETIME` and `BOOLEAN` supported by database, while frontend includes the other shared values.
-- Frontend ticket status constants omit database status `REOPENED`.
 - Axios is configured with credentials, while backend is currently configured as bearer-JWT resource server; final transport strategy is unconfirmed.
 - H2 context test does not execute Flyway; real migration coverage depends on optional SQL Server Testcontainers run.
 - `application.yml` contains development fallback secrets/passwords. Documentation says production values must be externalized; production secret handling is TBD.
