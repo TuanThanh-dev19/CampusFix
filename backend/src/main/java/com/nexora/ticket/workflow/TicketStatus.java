@@ -1,6 +1,6 @@
-package com.nexora.ticket.entity;
+package com.nexora.ticket.workflow;
 
-/** Canonical ticket lifecycle states persisted by SQL Server. */
+/** Canonical ticket lifecycle states persisted by SQL Server and exposed by the API. */
 public enum TicketStatus {
     SUBMITTED,
     UNDER_REVIEW,
