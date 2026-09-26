@@ -1,11 +1,37 @@
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { ROLES } from '../../../shared/constants/roles'
 import { AuthContext } from './auth-context'
 
 const SESSION_KEY = 'nexora.demo-user'
 
+function isCanonicalDemoUser(value) {
+  return (
+    value !== null &&
+    typeof value === 'object' &&
+    typeof value.email === 'string' &&
+    Array.isArray(value.roles) &&
+    value.roles.length > 0 &&
+    value.roles.every((role) => ROLES.includes(role))
+  )
+}
+
 function readDemoUser() {
   const stored = sessionStorage.getItem(SESSION_KEY)
-  return stored ? JSON.parse(stored) : null
+  if (!stored) {
+    return null
+  }
+
+  try {
+    const parsed = JSON.parse(stored)
+    if (isCanonicalDemoUser(parsed)) {
+      return parsed
+    }
+  } catch {
+    // Invalid sessions are cleared below and treated as unauthenticated.
+  }
+
+  sessionStorage.removeItem(SESSION_KEY)
+  return null
 }
 
 export function AuthProvider({ children }) {

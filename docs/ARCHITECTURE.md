@@ -99,7 +99,11 @@ Rules:
 SUBMITTED → UNDER_REVIEW → ASSIGNED → IN_PROGRESS → RESOLVED → CLOSED
 ```
 
-The MVP also supports `REJECTED` and `CANCELLED`. `DUPLICATE` and `REOPENED` are optional extensions. When reopening a resolved ticket, clear its current `resolved_at`; the previous resolution event remains in `ticket_status_history`. Implement transitions as tested Java policy code. Do not expose a generic endpoint that lets the client assign any status.
+The canonical SQL Server status set also includes `REOPENED`, `REJECTED`, and
+`CANCELLED`. Display labels remain separate from these stored/API codes. Ticket
+transition behavior, including reopening a resolved ticket, belongs to tested
+Java policy code and is implemented separately from the vocabulary contract. Do
+not expose a generic endpoint that lets the client assign any status.
 
 ## Dynamic category forms
 

@@ -1,10 +1,31 @@
-export const TICKET_STATUSES = [
-  'SUBMITTED',
-  'UNDER_REVIEW',
-  'ASSIGNED',
-  'IN_PROGRESS',
-  'RESOLVED',
-  'CLOSED',
-  'REJECTED',
-  'CANCELLED',
-]
+export const TICKET_STATUS_CODES = Object.freeze({
+  SUBMITTED: 'SUBMITTED',
+  UNDER_REVIEW: 'UNDER_REVIEW',
+  ASSIGNED: 'ASSIGNED',
+  IN_PROGRESS: 'IN_PROGRESS',
+  RESOLVED: 'RESOLVED',
+  REOPENED: 'REOPENED',
+  CLOSED: 'CLOSED',
+  REJECTED: 'REJECTED',
+  CANCELLED: 'CANCELLED',
+})
+
+export const TICKET_STATUSES = Object.freeze(Object.values(TICKET_STATUS_CODES))
+
+export const TICKET_STATUS_LABELS = Object.freeze({
+  [TICKET_STATUS_CODES.SUBMITTED]: 'Submitted',
+  [TICKET_STATUS_CODES.UNDER_REVIEW]: 'Under review',
+  [TICKET_STATUS_CODES.ASSIGNED]: 'Assigned',
+  [TICKET_STATUS_CODES.IN_PROGRESS]: 'In progress',
+  [TICKET_STATUS_CODES.RESOLVED]: 'Resolved',
+  [TICKET_STATUS_CODES.REOPENED]: 'Reopened',
+  [TICKET_STATUS_CODES.CLOSED]: 'Closed',
+  [TICKET_STATUS_CODES.REJECTED]: 'Rejected',
+  [TICKET_STATUS_CODES.CANCELLED]: 'Cancelled',
+})
+
+export const TICKET_STATUS_OPTIONS = Object.freeze(
+  TICKET_STATUSES.map((value) =>
+    Object.freeze({ value, label: TICKET_STATUS_LABELS[value] }),
+  ),
+)

@@ -4,6 +4,7 @@ import { DashboardPage } from '../features/dashboard/pages/DashboardPage'
 import { HomePage } from '../features/home/pages/HomePage'
 import { TicketListPage } from '../features/tickets/pages/TicketListPage'
 import { PlaceholderPage } from '../shared/components/PlaceholderPage'
+import { ROLE_CODES } from '../shared/constants/roles'
 import { AppLayout } from '../shared/layouts/AppLayout'
 import { ProtectedRoute } from './routes/ProtectedRoute'
 import { RequireRole } from './routes/RequireRole'
@@ -20,7 +21,9 @@ export const router = createBrowserRouter([
           { path: 'dashboard', element: <DashboardPage /> },
           { path: 'tickets', element: <TicketListPage /> },
           {
-            element: <RequireRole roles={['MANAGER', 'ADMIN']} />,
+            element: (
+              <RequireRole roles={[ROLE_CODES.MANAGER, ROLE_CODES.ADMIN]} />
+            ),
             children: [
               {
                 path: 'assets',
@@ -43,7 +46,7 @@ export const router = createBrowserRouter([
             ],
           },
           {
-            element: <RequireRole roles={['ADMIN']} />,
+            element: <RequireRole roles={[ROLE_CODES.ADMIN]} />,
             children: [
               {
                 path: 'administration',

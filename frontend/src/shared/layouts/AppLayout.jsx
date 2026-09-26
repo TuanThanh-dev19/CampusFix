@@ -1,6 +1,9 @@
 import { Button, Container, Nav, Navbar } from 'react-bootstrap'
 import { NavLink, Outlet } from 'react-router'
 import { useAuth } from '../../features/auth/context/useAuth'
+import { ROLE_CODES } from '../constants/roles'
+
+const ASSET_MANAGEMENT_ROLES = [ROLE_CODES.MANAGER, ROLE_CODES.ADMIN]
 
 export function AppLayout() {
   const { user, logout } = useAuth()
@@ -21,8 +24,8 @@ export function AppLayout() {
               <Nav.Link as={NavLink} to="/tickets">
                 Tickets
               </Nav.Link>
-              {user?.roles.some(
-                (role) => role === 'MANAGER' || role === 'ADMIN',
+              {user?.roles.some((role) =>
+                ASSET_MANAGEMENT_ROLES.includes(role),
               ) && (
                 <Nav.Link as={NavLink} to="/assets">
                   Assets
